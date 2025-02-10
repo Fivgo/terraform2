@@ -1,34 +1,36 @@
 #!/bin/bash
 
-# Install necessary packages
-sudo apt-get update
-sudo apt-get install -y jq
+# Define the marker file
+MARKER_FILE="/var/tmp/startup-script-ran"
 
-# Create the idle shutdown script
-cat << 'EOF' > /usr/local/bin/idle-shutdown.sh
-#!/bin/bash
+# Check if the marker file exists
+if [ ! -f "$MARKER_FILE" ]; then
+    ## Install necessary packages
+    sudo apt-get update
+    sudo apt-get install -y jq
 
-# Set the idle timeout in seconds (15 minutes)
-IDLE_TIMEOUT=100
+    gsutil cp gs://e-bucket-terraform-built/mc-server/server.jar landing/server.jar
 
-# Get the instance name and zone
-INSTANCE_NAME=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/name)
-ZONE=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/zone | awk -F/ '{print $4}')
+    wget https://download.oracle.com/java/23/latest/jdk-23_linux-x64_bin.deb
 
-# Check for idle time
-while true; do
-  IDLE_TIME=$(xprintidle)
-  if [ "$IDLE_TIME" -ge "$IDLE_TIMEOUT" ]; then
-    echo "Instance $INSTANCE_NAME in zone $ZONE is idle for $IDLE_TIMEOUT seconds. Shutting down..."
-    gcloud compute instances stop $INSTANCE_NAME --zone=$ZONE
-    break
-  fi
-  sleep 60
-done
-EOF
+    sudo dpkg -i jdk-23_linux-x64_bin.deb
 
-# Make the script executable
-chmod +x /usr/local/bin/idle-shutdown.sh
+    echo "LOOK HERE IM STARTING THE SERVER"
 
-# Add the idle shutdown script to crontab
-(crontab -l 2>/dev/null; echo "@reboot /usr/local/bin/idle-shutdown.sh") | crontab -
+    cd landing
+
+    java -jar server.jar
+
+    sudo chmod 664 eula.txt
+
+    sudo sed -i 's/false/true/' eula.txt
+
+    # Create the marker file to indicate the script has run
+    sudo touch "$MARKER_FILE"
+
+    cd ..
+fi
+
+# Run the server jar (this will run every time)
+cd landing
+java -jar server.jar

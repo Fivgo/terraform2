@@ -19,7 +19,7 @@ terraform {
 provider "google" {
   #credentials = "${file("account.json")}"
   credentials = file("./application_default_credentials.json")
-  project     = "vital-reef-450000-f4"
+  project     = var.project_id
   region      = "us-west1"
   zone        = "us-west1-a"
 }
@@ -29,6 +29,38 @@ resource "null_resource" "default" {
     command = "echo 'Hello World'"
   }
 }
+
+
+# Create a new service account for the VM
+
+resource "google_service_account" "default" {
+  account_id   = "my-vm-service-account"
+  display_name = "Service Account for my VM"
+}
+
+resource "google_project_iam_member" "default" {
+  project = var.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
+
+
+# create a hole in the firewall
+
+resource "google_compute_firewall" "default" {
+  name    = "default-allow-http-https"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["25565"]
+  }
+  source_tags = ["minecraft"]
+  target_tags = ["http-server", "https-server"]
+}
+
+
 
 # Create new storage bucket in the US
 # location with Standard Storage
@@ -58,6 +90,12 @@ resource "google_storage_bucket_object" "server" {
  bucket       = google_storage_bucket.static.id
 }
 
+resource "google_storage_bucket_object" "startup" {
+ name         = "startup-script.sh"
+ source       = "./startup-script.sh"
+ content_type = "text/plain"
+ bucket       = google_storage_bucket.static.id
+}
 
 #setup a cluster
 
@@ -66,9 +104,11 @@ resource "google_compute_instance" "default" {
   machine_type = "n1-standard-1"
   zone         = "us-west1-a"
 
+  tags = ["http-server", "https-server"]
+
   boot_disk {
     initialize_params {
-      image = "debian-12-bookworm-arm64-v20250113"
+      image = "debian-12-bookworm-v20250113"
     }
   }
 
@@ -76,5 +116,22 @@ resource "google_compute_instance" "default" {
     network = "default"
     access_config {}
   }
-  metadata_startup_script = file("./startup-script.sh")
+
+  service_account {
+    email  = google_service_account.default.email
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+  }
+
+  #metadata_startup_script = "${file("startup-script.sh")}"
+
+  metadata = {
+    startup-script-url = "gs://${var.gcp_bucket}/startup-script.sh"
+  }
+
+
+  ## Install necessary packages
+  #sudo apt-get update
+  #sudo apt-get install -y jq
+
+  #metadata_startup_script = "echo hi there > /test.txt"      #"${file("startup-script.sh")}"
 }
