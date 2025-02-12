@@ -1,7 +1,17 @@
 #!/bin/bash
 
 # Define the marker file
+echo "making marker file"
 MARKER_FILE="/var/tmp/startup-script-ran"
+
+# Get VM name from metadata server
+echo "getting vm name"
+VM_NAME=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/name | sed 's/app-vm-//')
+
+
+echo "VM_NAME: $VM_NAME. setting bucket name"
+BUCKET_NAME="e1015-bucket-$VM_NAME"
+
 
 # Check if the marker file exists
 if [ ! -f "$MARKER_FILE" ]; then
@@ -9,7 +19,7 @@ if [ ! -f "$MARKER_FILE" ]; then
     sudo apt-get update
     sudo apt-get install -y jq
 
-    gsutil cp gs://e-bucket-terraform-built/mc-server/server.jar landing/server.jar
+    gsutil cp gs://$BUCKET_NAME/mc-server/server.jar landing/server.jar
 
     wget https://download.oracle.com/java/23/latest/jdk-23_linux-x64_bin.deb
 
