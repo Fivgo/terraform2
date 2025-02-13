@@ -5,10 +5,22 @@ variable "gcp_bucket" {
 }
 
 
-variable "project_id" {
+variable "project_id_main" {
   type = string
   default = "vital-reef-450000-f4"
-  description = "The name of the GCP bucket to create"
+  description = "The name of the GCP project for main"
+}
+
+variable "project_id_cli" {
+  type = string
+  default = "vm-cli"
+  description = "The name of the GCP project for cli"
+}
+
+variable "project_id_con" {
+  type = string
+  default = "vm-controller"
+  description = "The name of the GCP project for con"
 }
 
 variable "source_file" {
@@ -39,4 +51,11 @@ variable "vm_config" {
     base_name    = "app-vm"
     tags = ["http-server", "https-server"]
   }
+}
+
+variable "controller_zone" {
+  type = string
+  default = "us-west1-a"
+  description = "The zone in which to create the controller VM"
+  
 }

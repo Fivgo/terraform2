@@ -1,1 +1,3 @@
 .terraform
+secrets.tf
+application_default_credentials.json
