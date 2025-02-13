@@ -67,6 +67,24 @@ resource "google_storage_bucket" "bucket-gen" {
     uniform_bucket_level_access = true
 }
 
+#Generate a bucket for the controller
+resource "google_storage_bucket_object" "startup-cli" {
+    #provider = google.admin
+    for_each = local.client
+    name         = "startup-script.sh"
+    source       = "./startup-script.sh"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen[each.value.name].id
+}
+
+resource "google_storage_bucket_object" "server" {
+    for_each = local.client
+    name         = "mc-server/server.jar"
+    source       = "./materials/mc-server/server.jar"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen[each.value.name].id
+}
+
 # Create a new service account for the VM
 resource "google_service_account" "vm_srv_acct_gen" {
     #provider = google.admin

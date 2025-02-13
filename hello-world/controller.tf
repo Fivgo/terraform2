@@ -70,7 +70,7 @@ resource "google_storage_bucket" "bucket-gen-con" {
 }
 
 #Generate a bucket for the controller
-resource "google_storage_bucket_object" "startup" {
+resource "google_storage_bucket_object" "startup-con" {
     #provider = google.admin
     name         = "controller-startup.sh"
     source       = "./controller-startup.sh"
