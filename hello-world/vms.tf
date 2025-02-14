@@ -1,6 +1,6 @@
 # Create controller VM
 resource "google_compute_instance" "controller" {
-    #provider = google.admin
+    
     name         = "vm-controller"
     machine_type = "e2-small"
     project      = google_project.controller.project_id
@@ -31,7 +31,7 @@ resource "google_compute_instance" "controller" {
 
 resource "google_compute_instance" "vm_inst_gen" {
   for_each = local.client
-  #provider = google.admin
+  
   name         = "${var.vm_config.base_name}-${each.value.name}"
   machine_type = var.vm_config.machine_type
   zone         = var.vm_config.zone

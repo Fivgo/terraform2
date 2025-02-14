@@ -1,6 +1,6 @@
 # Create controller project
 resource "google_project" "controller" {  
-    #provider = google.admin
+    
     name       = var.project_id_con
     project_id = "${var.project_id_con}-1"
     
@@ -14,7 +14,7 @@ resource "google_project" "controller" {
 # Create projects for each client VM
 resource "google_project" "client_projects" {
     for_each = local.client
-    #provider = google.admin
+    
     
     name       = "${each.value.name}-project"
     project_id = "${each.value.name}-id"

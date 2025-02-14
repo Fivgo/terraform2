@@ -1,7 +1,7 @@
 #--------CONTROLLER BUCKETS--------
 # Enable required APIs in controller project
 resource "google_project_service" "controller_apis" {
-    #provider = google.admin
+    
     project  = "${var.project_id_con}-1"#"vital-reef-450000-f4" #google_project.controller.project_id
     
     for_each = toset([
@@ -30,7 +30,7 @@ locals {
 }
 
 resource "google_project_service" "client_apis" {
-  #provider = google.admin
+  
   for_each = local.project_services
   
   project = each.value.project_id

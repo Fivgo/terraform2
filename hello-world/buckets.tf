@@ -1,7 +1,7 @@
 #--------CONTROLLER BUCKETS--------
 
 resource "google_storage_bucket" "bucket-gen-con" {
-    #provider = google.admin
+    
     name          = "${var.gcp_bucket}-con"
     location      = "US"
     storage_class = "STANDARD"
@@ -26,7 +26,7 @@ resource "google_storage_bucket_object" "startup-con" {
 # location with Standard Storage
 
 resource "google_storage_bucket" "bucket-gen" {
-    #provider = google.admin
+    
     for_each = local.client
 
     name          = "${var.gcp_bucket}-${each.value.name}"
@@ -39,7 +39,7 @@ resource "google_storage_bucket" "bucket-gen" {
 
 #Generate a bucket for the controller
 resource "google_storage_bucket_object" "startup-cli" {
-    #provider = google.admin
+    
     for_each = local.client
     name         = "startup-script.sh"
     source       = "./materials/scripts/startup-script.sh"

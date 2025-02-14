@@ -1,3 +1,5 @@
+# Order: main, vars & secrets, projects, apis, buckets, permissions, vms, network
+
 terraform {
   cloud {
     hostname = "app.terraform.io"
