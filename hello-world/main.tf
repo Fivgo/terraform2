@@ -16,27 +16,19 @@ provider "google" {
   #zone        = "us-west1-a"
 }
 
-# Random suffix to ensure unique project IDs
-resource "random_id" "project_suffix" {
-  byte_length = 4
+# # Import all current clients
+module "client_configs" {
+  source = "./modules/clients"
 }
 
+locals {
+  # Access all client configurations
+  all_clients = module.client_configs.configs
+  
+  # Create VM names for each client based on their config
+  client = { for cli in local.all_clients : cli.name => {
+     name    = cli.name
+     name_tx = cli.name_tx
+   }}
 
-# create a hole in the firewall
-
-resource "google_compute_firewall" "default" {
-  name    = "default-allow-http-https"
-  network = "default"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["25565"]
-  }
-  source_tags = ["minecraft"]
-  target_tags = ["http-server", "https-server"]
 }
-
-
-
-
-
