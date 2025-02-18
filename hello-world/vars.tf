@@ -23,17 +23,6 @@ variable "project_id_con" {
   description = "The name of the GCP project for con"
 }
 
-variable "source_file" {
-  type = object({
-    name        = string
-    name_tx     = string
-  })
-  description = "The YAML file containing client configuration"
-  default = {
-    name = "SHOULDCHANGE"
-    name_tx = "SHOULDCHANGE"
-  }
-}
 
 # Define common VM properties
 variable "vm_config" {

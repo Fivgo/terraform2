@@ -43,4 +43,4 @@ fi
 
 # Run the server jar (this will run every time)
 cd landing
-java -jar server.jar
+screen -S minecraft -d -m java -jar server.jar

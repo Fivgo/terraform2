@@ -42,15 +42,24 @@ resource "google_storage_bucket_object" "startup-cli" {
     
     for_each = local.client
     name         = "startup-script.sh"
-    source       = "./materials/scripts/startup-script.sh"
+    source       = "./materials/scripts/${each.value.startup_script}"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen[each.value.name].id
+}
+
+resource "google_storage_bucket_object" "shutdown-cli" {
+    
+    for_each = local.client
+    name         = "shutdown-script.sh"
+    source       = "./materials/scripts/shutdown-script.sh"
     content_type = "text/plain"
     bucket       = google_storage_bucket.bucket-gen[each.value.name].id
 }
 
 resource "google_storage_bucket_object" "server" {
     for_each = local.client
-    name         = "mc-server/server.jar"
-    source       = "./materials/mc-server/server.jar"
+    name         = "${each.value.file_path}"
+    source       = "./materials/${each.value.file_path}"
     content_type = "text/plain"
     bucket       = google_storage_bucket.bucket-gen[each.value.name].id
 }

@@ -1,4 +1,4 @@
-# Order: main, vars & secrets, projects, apis, buckets, permissions, vms, network
+# Order: main, modules, vars & secrets, projects, apis, buckets, permissions, vms, network
 
 terraform {
   cloud {
@@ -25,12 +25,5 @@ module "client_configs" {
 
 locals {
   # Access all client configurations
-  all_clients = module.client_configs.configs
-  
-  # Create VM names for each client based on their config
-  client = { for cli in local.all_clients : cli.name => {
-     name    = cli.name
-     name_tx = cli.name_tx
-   }}
-
+  client = module.client_configs.configs
 }

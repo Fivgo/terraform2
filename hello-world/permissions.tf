@@ -44,16 +44,3 @@ resource "google_storage_bucket_iam_member" "bucket_admin_access" {
     role    = "roles/storage.admin" # need admin role because each vm needs c,w,and d
     member  = "serviceAccount:${google_service_account.vm_srv_acct_gen[each.value.name].email}"
 }
-
-# # Grant the user the ability to use service accounts
-# resource "google_service_account_iam_binding" "vm_sa_user" {
-  
-#   for_each = local.client
-
-#   service_account_id = "projects/${google_project.client_projects[each.value.name].project_id}/serviceAccounts/${google_service_account.vm_srv_acct_gen[each.value.name].email}"
-#   role               = "roles/iam.serviceAccountUser"
-  
-#   members = [
-#     "user:TheFiveEgos@gmail.com"  # Replace with your email
-#   ]
-# }

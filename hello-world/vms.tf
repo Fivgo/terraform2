@@ -33,15 +33,19 @@ resource "google_compute_instance" "vm_inst_gen" {
   for_each = local.client
   
   name         = "${var.vm_config.base_name}-${each.value.name}"
-  machine_type = var.vm_config.machine_type
-  zone         = var.vm_config.zone
+  machine_type = each.value.machine_type
+  zone         = each.value.zone
   project      = google_project.client_projects[each.value.name].project_id
 
   tags = var.vm_config.tags
 
+
+
   boot_disk {
     initialize_params {
       image = "debian-12-bookworm-v20250113"
+      size = each.value.disk.disk_size
+      type = each.value.disk.disk_type
     }
   }
 
@@ -57,6 +61,7 @@ resource "google_compute_instance" "vm_inst_gen" {
 
   metadata = {
     startup-script-url = "gs://${var.gcp_bucket}-${each.value.name}/startup-script.sh"
+    shutdown-script-url = "gs://${var.gcp_bucket}-${each.value.name}/shutdown-script.sh"
   }
 
 }
