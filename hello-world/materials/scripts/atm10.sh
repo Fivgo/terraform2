@@ -41,7 +41,7 @@ if [ ! -f "$MARKER_FILE" ]; then
 
     until [ -f "$file_path" ]; do
     echo "Waiting for file '$file_path' to exist..."
-    sleep 1 # Check every second
+    sleep 1 # Check every second  
     done
 
     sudo sed -i 's/false/true/' eula.txt
