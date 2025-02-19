@@ -1,5 +1,6 @@
 .terraform
 secrets.tf
-
+application_default_credentials.json
 mute
 world2.zip
+bot.py

@@ -22,7 +22,7 @@ resource "google_compute_instance" "controller" {
         scopes = ["cloud-platform"]
     }
     metadata = {
-        startup-script-url = "gs://${var.gcp_bucket}-con/controller-script.sh"
+        startup-script-url = "gs://${var.gcp_bucket}-con/${google_storage_bucket_object.startup-con.name}"
     }
 
 }

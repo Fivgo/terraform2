@@ -18,6 +18,22 @@ resource "google_storage_bucket_object" "startup-con" {
     bucket       = google_storage_bucket.bucket-gen-con.id
 }
 
+#Generate a manage script for the controller
+resource "google_storage_bucket_object" "manage-con" {
+    name         = "manage_vms.py"
+    source       = "./materials/scripts/manage_vms.py"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen-con.id
+}
+
+#Generate a manage script for the controller
+resource "google_storage_bucket_object" "bot-con" {
+    name         = "bot.py"
+    source       = "./materials/scripts/bot.py"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen-con.id
+}
+
 
 
 #--------CLIENT BUCKETS--------

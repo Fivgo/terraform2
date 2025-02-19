@@ -29,7 +29,21 @@ sleep 60
 
 screen -S minecraft -X stuff 'stop\r'
 
-sleep 60
+# Limit the number of backups to 3
+echo "Limiting the number of backups to 3"
+BACKUPS=$(gsutil ls gs://$BUCKET_NAME/backups/ | grep 'world2_' | sort)
+BACKUP_COUNT=$(echo "$BACKUPS" | wc -l)
+
+if [ "$BACKUP_COUNT" -gt 3 ]; then
+  BACKUPS_TO_DELETE=$(echo "$BACKUPS" | head -n -3)
+  for BACKUP in $BACKUPS_TO_DELETE; do
+    echo "Deleting old backup: $BACKUP"
+    gsutil rm "$BACKUP"
+  done
+fi
+
+
+sleep 10
 
 
 
