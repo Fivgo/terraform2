@@ -5,15 +5,14 @@ echo "making marker file"
 MARKER_FILE="/var/tmp/startup-script-ran"
 
 # Get VM name from metadata server
-echo "getting vm name"
-VM_NAME=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/name | sed 's/app-vm-//')
+echo "getting vm name. Exported"
+export VM_NAME=${cli_vm_name}
 
+# Set the bucket name, set to export so it can be used in the mc-backup.sh script
+echo "VM_NAME: $VM_NAME. setting bucket name. Exported"
+export BUCKET_NAME="gs://${cli_bucket_name}"
 
-echo "VM_NAME: $VM_NAME. setting bucket name"
-BUCKET_NAME="e1015-bucket-$VM_NAME"
-
-
-
+echo "BUCKET_NAME: $BUCKET_NAME"
 
 # Check if the marker file exists
 if [ ! -f "$MARKER_FILE" ]; then

@@ -1,39 +1,65 @@
 
-variable "default_machine_type" {
-  type = string
-  default = "n1-standard-1"
-  description = "The name of the type of vm to create"
-}
-
-variable "default_zone_type" {
-  type = string
-  default = "us-west1-a"
-  description = "The name of the zone to create in"
-}
-
-variable "default_disk_type" {
+variable "default" {
   type = object({
-    disk_size : string
-    disk_type : string
+    name : string
+    name_tx : string
+    machine_type : string
+    zone : string
+    disk : object({
+      disk_size : string
+      disk_type : string
+    })
+    startup_script : string
+    file_path : string
   })
   default = {
-    disk_size : "10",
-    disk_type : "pd-balanced"
+    machine_type : "n1-standard-1"
+    zone : "us-west1-a"
+    disk : {
+      disk_size : "10"
+      disk_type : "pd-balanced"
+    }
+    startup_script : "startup-script.sh"
+    file_path : "mc-server/server.jar"
   }
-  description = "default disk variables enitialized"
+  description = "default variables enitialized"
 }
 
-variable "default_startup_script" {
-  type = string
-  default = "startup-script.sh"
-  description = "The name of the startup script"
-}
+# variable "default_machine_type" {
+#   type = string
+#   default = "n1-standard-1"
+#   description = "The name of the type of vm to create"
+# }
 
-variable "default_file_path" {
-  type = string
-  default = "mc-server/server.jar"
-  description = "The name of the file path"
-}
+# variable "default_zone_type" {
+#   type = string
+#   default = "us-west1-a"
+#   description = "The name of the zone to create in"
+# }
+
+# variable "default_disk_type" {
+#   type = object({
+#     disk_size : string
+#     disk_type : string
+#   })
+#   default = {
+#     disk_size : "10",
+#     disk_type : "pd-balanced"
+#   }
+#   description = "default disk variables enitialized"
+# }
+
+# variable "default_startup_script" {
+#   type = string
+#   default = "startup-script.sh"
+#   description = "The name of the startup script"
+# }
+
+# variable "default_file_path" {
+#   type = string
+#   default = "mc-server/server.jar"
+#   description = "The name of the file path"
+# }
 
 
 
@@ -57,11 +83,11 @@ output "configs" {
     for client in local.client_configs : client.name => {
       name         = client.name
       name_tx      = client.name_tx
-      machine_type = can(client.machine_type) ? client.machine_type : var.default_machine_type
-      startup_script = can(client.startup_script) ? client.startup_script : var.default_startup_script
-      zone = can(client.zone) ? client.zone : var.default_zone_type
-      disk = can(client.disk) ? client.disk : var.default_disk_type
-      file_path = can(client.file_path) ? client.file_path : var.default_file_path
+      machine_type = can(client.machine_type) ? client.machine_type : var.default.machine_type
+      startup_script = can(client.startup_script) ? client.startup_script : var.default.startup_script
+      zone = can(client.zone) ? client.zone : var.default.zone
+      disk = can(client.disk) ? client.disk : var.default.disk
+      file_path = can(client.file_path) ? client.file_path : var.default.file_path
     }
   }
 

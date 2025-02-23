@@ -6,14 +6,6 @@ file_path="/landing/Server-Files-2.20/eula.txt"
 
 file_path2="/landing/Server-Files-2.20/user_jvm_args.txt"
 
-# Get VM name from metadata server
-echo "getting vm name"
-VM_NAME=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/name | sed 's/app-vm-//')
-
-
-echo "VM_NAME: $VM_NAME. setting bucket name"
-BUCKET_NAME="e1015-bucket-$VM_NAME"
-
 
 # Check if the marker file exists
 if [ ! -f "$MARKER_FILE" ]; then

@@ -37,12 +37,30 @@ resource "google_storage_bucket" "bucket-gen" {
     uniform_bucket_level_access = true
 }
 
-#Generate a bucket for the controller
+resource "local_file" "cli_startup_script" {
+  for_each = local.client
+
+  content  = templatefile("./materials/scripts/startup-script.sh.tpl", {
+    bucket_name = google_storage_bucket.bucket-gen[each.value.name].name
+  })
+  filename = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+}
+
+resource "local_file" "cli_mc_backup_script" {
+  for_each = local.client
+
+  content  = templatefile("./materials/scripts/startup-script.sh.tpl", {
+    bucket_name = google_storage_bucket.bucket-gen[each.value.name].name
+  })
+  filename = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+}
+
 resource "google_storage_bucket_object" "startup-cli" {
     
     for_each = local.client
     name         = "startup-script.sh"
-    source       = "./materials/scripts/${each.value.startup_script}"
+    source       = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+    #source       = "./materials/scripts/${each.value.startup_script}"
     content_type = "text/plain"
     bucket       = google_storage_bucket.bucket-gen[each.value.name].id
 }
