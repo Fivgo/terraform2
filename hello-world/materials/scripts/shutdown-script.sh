@@ -21,6 +21,8 @@ zip -r world2_$TIMESTAMP.zip world2
 
 gsutil cp -r world2_$TIMESTAMP.zip gs://e1015-bucket-$VM_NAME/backups/world2_$TIMESTAMP
 
+rm world2_$TIMESTAMP.zip
+
 screen -S minecraft -X stuff 'say "should" be saved...\r'
 
 screen -S minecraft -X stuff 'say shuttingdownin60seconds\r'
