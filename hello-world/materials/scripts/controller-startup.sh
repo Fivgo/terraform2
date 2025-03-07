@@ -33,7 +33,7 @@ if [ ! -f "$BOT_FILE" ]; then
     chmod +x $BOT_FILE
 fi
 
-
+python3 /usr/local/bin/bot.py
 
 
 # To stop a VM:

@@ -3,6 +3,7 @@ variable "default" {
   type = object({
     name : string
     name_tx : string
+    server_type : string
     machine_type : string
     zone : string
     disk : object({
@@ -13,6 +14,9 @@ variable "default" {
     file_path : string
   })
   default = {
+    name : "CHANGETHIS"
+    name_tx : "CHANGETHIS"
+    server_type : "minecraft"
     machine_type : "n1-standard-1"
     zone : "us-west1-a"
     disk : {

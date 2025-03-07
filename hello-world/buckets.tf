@@ -56,26 +56,37 @@ resource "google_storage_bucket" "bucket-gen" {
 resource "local_file" "cli_startup_script" {
   for_each = local.client
 
-  content  = templatefile("./materials/scripts/startup-script.sh.tpl", {
-    bucket_name = google_storage_bucket.bucket-gen[each.value.name].name
-  })
-  filename = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+content  = templatefile("./materials/scripts/startup-script.sh.tpl", {
+    bucket_name = google_storage_bucket.bucket-gen[each.value.name].name,
+    cli_vm_name = each.value.name
+})
+  filename = "${path.module}/materials/scripts/generated/startup-script-${each.key}.sh"
 }
 
 resource "local_file" "cli_mc_backup_script" {
   for_each = local.client
 
-  content  = templatefile("./materials/scripts/startup-script.sh.tpl", {
+  content  = templatefile("./materials/scripts/mc-backup.sh.tpl", {
     bucket_name = google_storage_bucket.bucket-gen[each.value.name].name
   })
-  filename = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+  filename = "${path.module}/materials/scripts/generated/mc-backup-${each.key}.sh"
 }
 
 resource "google_storage_bucket_object" "startup-cli" {
     
     for_each = local.client
     name         = "startup-script.sh"
-    source       = "${path.module}/materials/scripts/startup-script-${each.key}.sh"
+    source       = "${path.module}/materials/scripts/generated/startup-script-${each.key}.sh"
+    #source       = "./materials/scripts/${each.value.startup_script}"
+    content_type = "text/plain"
+    bucket       = google_storage_bucket.bucket-gen[each.value.name].id
+}
+
+resource "google_storage_bucket_object" "mc-backup-cli" {
+    
+    for_each = local.client
+    name         = "startup-script.sh"
+    source       = "${path.module}/materials/scripts/mc-backup-${each.key}.sh"
     #source       = "./materials/scripts/${each.value.startup_script}"
     content_type = "text/plain"
     bucket       = google_storage_bucket.bucket-gen[each.value.name].id

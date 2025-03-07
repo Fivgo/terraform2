@@ -50,10 +50,7 @@ if [ ! -f "$MARKER_FILE" ]; then
     sudo touch "$MARKER_FILE"
     
 else
-    cd /landing/Server-Files-2.20/
-
-    
-    screen -S minecraft -d -m bash startserver.sh
+    screen -S minecraft -d -m bash /landing/Server-Files-2.20/startserver.sh
     #sudo bash startserver.sh
 fi
 # cd Server-Files-2.20
